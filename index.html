@@ -56,27 +56,41 @@
       whiteBoard.rotation.set(0, 0, 0);
       scene.add( whiteBoard );
 
+
+
       //テキスト
       const loader = new THREE.FontLoader();
-      const textMesh = new THREE.Mesh();
+      const textMeshArray = [];
+      const numOfTextMesh = 3;
+      for (let i = 0; i < numOfTextMesh; i++) {
+        textMeshArray.push(new THREE.Mesh());
+      }
+      // const textMesh = new THREE.Mesh();
+      // const textMesh2 = new THREE.Mesh();
       loader.load( 'helvetiker_bold.typeface.json', function ( font ) {
-        const textGeometry = new THREE.TextGeometry( 'impl', {
+        const textGeoParam = {
           font: font,
           size: 2,
           height: 5,
           curveSegments: 12
-        } );
+        };
+
+        const textGeometry = new THREE.TextGeometry( 'impl', textGeoParam );
         const textMaterials = [
           // 文字の前面
           new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff } ),
           // 文字の側面
           new THREE.MeshBasicMaterial( { color: 0x000000 } )
         ];
-        textMesh.geometry = textGeometry;
-        textMesh.material = textMaterials;
-        
-        textMesh.position.z = -4.90;
-        scene.add(textMesh);
+
+        textMeshArray.forEach((textMesh, index) => {
+          textMesh.geometry = textGeometry;
+          textMesh.material = textMaterials;
+          textMesh.position.z = -4.90;
+          textMesh.position.x = 6 * index;
+          scene.add(textMesh);
+        })
+
         tick();
 
       } );
@@ -92,10 +106,6 @@
       // repeat: -1 => 無限リピート
 
 
-      
-
-
-      
 
       // 毎フレーム時に実行されるループイベントです
       function tick() {
@@ -119,7 +129,8 @@
 
 				renderer.setSize( window.innerWidth, window.innerHeight );
       }
-      
+
+
       function onMouseMove(event) {
         event.preventDefault();
         // マウス座標を更新
@@ -129,13 +140,15 @@
         // レイキャスト = マウス位置からまっすぐに伸びる光線ベクトルを生成
         raycaster.setFromCamera(mouse, camera);
         // その光線とぶつかったオブジェクトを得る
-        let intersects = raycaster.intersectObjects([textMesh]);
+        let intersects = raycaster.intersectObjects(textMeshArray);
           intersects.forEach(intersect => {
-            timeLine.clear();
-            timeLine.to(intersect.object.position, 1 , {z: 0})
-              .to(intersect.object.position, 1 , {z: -4.90});
-          })
-        
+            // アニメーションしていない場合だけタイムラインを作成する
+            if (!TweenMax.isTweening(intersect.object.position)) {
+              const timeLine = new TimelineMax();
+              timeLine.to(intersect.object.position, 1 , {z: 0})
+                .to(intersect.object.position, 1 , {z: -4.90});
+            }
+          });
         
       }
 
