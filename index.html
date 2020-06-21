@@ -23,7 +23,6 @@
       });
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(width, height);
-      // renderer.setClearColor(0xF5F5F5, 1);
 
       // シーンを作成
       const scene = new THREE.Scene();
@@ -37,130 +36,45 @@
 
       const controls = new THREE.OrbitControls(camera);
       controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-      //controls.dampingFactor = 0.05;
+      controls.dampingFactor = 0.05;
       controls.screenSpacePanning = false;
       controls.minDistance = 1;
 			controls.maxDistance = 800;
       controls.maxPolarAngle = Math.PI / 1.4;
       controls.enableZoom = true;
-      controls.autoRotate = true;
+      controls.autoRotate = false;
 
+      const whiteBoardGeo = new THREE.PlaneGeometry( 40, 20, 32 );
+      const whiteBoardMat = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+      const whiteBoard = new THREE.Mesh( whiteBoardGeo, whiteBoardMat );
+      whiteBoard.rotation.set(0, -0.4, 0);
+      scene.add( whiteBoard );
 
-
-
-      var SEPARATION = 5, AMOUNTX = 50, AMOUNTY = 50;
-      var numParticles = AMOUNTX * AMOUNTY;
-
-      var positions = new Float32Array( numParticles * 3 );
-      var scales = new Float32Array( numParticles );
-
-      var i = 0, j = 0;
-      for ( var ix = 0; ix < AMOUNTX; ix ++ ) {
-        for ( var iy = 0; iy < AMOUNTY; iy ++ ) {
-          positions[ i ] = ix * SEPARATION - ( ( AMOUNTX * SEPARATION ) / 2 ); // x
-          positions[ i + 1 ] = 0; // y
-          positions[ i + 2 ] = iy * SEPARATION - ( ( AMOUNTY * SEPARATION ) / 2 ); // z
-
-          scales[ j ] = 1;
-
-          i += 3;
-          j ++;
-        }
-      }
-
-      var geometry = new THREE.BufferGeometry();
-      geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
-      geometry.addAttribute( 'scale', new THREE.BufferAttribute( scales, 100 ) );
-
-      var color = new THREE.Color();
-      color.setHSL(0.5, 0.5, 0.5);
-      console.log(color);
-
-      var material = new THREE.PointsMaterial( { color: color } );
-      var particles = new THREE.Points( geometry, material );
-      console.log(particles.material.color.r);
-      // 箱を作成
-      // var geometry = new THREE.CylinderBufferGeometry( 0, 10, 30, 4, 1 );
-			// var material = new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } );
-
-      // for ( var i = 0; i < 500; i ++ ) {
-      //   var mesh = new THREE.Mesh( geometry, material );
-      //   mesh.position.x = i;
-      //   mesh.position.y = 0;
-      //   mesh.position.z = i * 10;
-      //   mesh.updateMatrix();
-      //   mesh.matrixAutoUpdate = false;
-      //   scene.add( mesh );
-
-      // }
-
-      // lights
-      scene.add( particles );
-
-      var light = new THREE.DirectionalLight( 0xffffff );
-      light.position.set( 1, 1, 1 );
-      scene.add( light );
-
-      var light = new THREE.DirectionalLight( 0x002288 );
-      light.position.set( - 1, - 1, - 1 );
-      scene.add( light );
-
-      var light = new THREE.AmbientLight( 0x222222 );
-			scene.add( light );
+      //テキスト
+      const loader = new THREE.FontLoader();
+      loader.load( 'helvetiker_bold.typeface.json', function ( font ) {
+        const textGeometry = new THREE.TextGeometry( 'impl', {
+          font: font,
+          size: 2,
+          height: 2,
+          curveSegments: 12
+        } );
+        const materials = [
+          new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, overdraw: 0.5 } ),
+          new THREE.MeshBasicMaterial( { color: 0x000000, overdraw: 0.5 } )
+        ];
+        const textMesh = new THREE.Mesh(textGeometry, materials);
+        textMesh.rotation.set(0, -0.4, 0);
+        scene.add(textMesh);
+      } );
       
 
       // 画面サイズの変更に対応
       window.addEventListener( 'resize', onWindowResize, false );
 
       tick();
-
-      var plusMinus = 1;
       // 毎フレーム時に実行されるループイベントです
       function tick() {
-        
-        if (plusMinus = 1) {
-          particles.material.color.r += 0.01;
-        } else {
-          particles.material.color.r -= 0.01;
-        }
-        
-        if (particles.material.color.r >= 1) {
-          plusMinus = 0;
-        }
-        if (particles.material.color.r <= 0) {
-          plusMinus = 1;
-        }
-        //console.log(particles.material.color.r);
-
-
-        // パーティクルの揺らめき
-        var positions = particles.geometry.attributes.position.array;
-				var scales = particles.geometry.attributes.scale.array;
-
-				var i = 0, j = 0;
-
-				for ( var ix = 0; ix < AMOUNTX; ix ++ ) {
-
-					for ( var iy = 0; iy < AMOUNTY; iy ++ ) {
-
-						positions[ i + 1 ] = ( Math.sin( ( ix + count ) * 0.3 ) * 5 ) +
-										( Math.sin( ( iy + count ) * 0.5 ) * 5 );
-
-						scales[ j ] = ( Math.sin( ( ix + count ) * 0.3 ) + 1 ) * 8 +
-										( Math.sin( ( iy + count ) * 0.5 ) + 1 ) * 8;
-
-						i += 3;
-						j ++;
-
-					}
-				}
-				count += 0.05;
-
-				particles.geometry.attributes.position.needsUpdate = true;
-				particles.geometry.attributes.scale.needsUpdate = true;
-
-      //console.log(particles.material.color.r);
-
 
 				renderer.render( scene, camera );
         requestAnimationFrame(tick);
