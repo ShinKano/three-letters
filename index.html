@@ -32,7 +32,7 @@
 
       // カメラを作成 (視野角, 画面のアスペクト比, カメラに映る最短距離, カメラに映る最遠距離)
       const camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000);
-      camera.position.set(0, 0, 30);
+      camera.position.set(12, 0, 30);
 
       const controls = new THREE.OrbitControls(camera);
       controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
@@ -47,36 +47,46 @@
       const whiteBoardGeo = new THREE.PlaneGeometry( 40, 20, 32 );
       const whiteBoardMat = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
       const whiteBoard = new THREE.Mesh( whiteBoardGeo, whiteBoardMat );
-      whiteBoard.rotation.set(0, -0.4, 0);
+      whiteBoard.rotation.set(0, 0, 0);
       scene.add( whiteBoard );
 
       //テキスト
       const loader = new THREE.FontLoader();
+      const textMesh = new THREE.Mesh();
       loader.load( 'helvetiker_bold.typeface.json', function ( font ) {
         const textGeometry = new THREE.TextGeometry( 'impl', {
           font: font,
           size: 2,
-          height: 2,
+          height: 5,
           curveSegments: 12
         } );
-        const materials = [
-          new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, overdraw: 0.5 } ),
-          new THREE.MeshBasicMaterial( { color: 0x000000, overdraw: 0.5 } )
+        const textMaterials = [
+          // 文字の前面
+          new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff } ),
+          // 文字の側面
+          new THREE.MeshBasicMaterial( { color: 0x000000 } )
         ];
-        const textMesh = new THREE.Mesh(textGeometry, materials);
-        textMesh.rotation.set(0, -0.4, 0);
+        textMesh.geometry = textGeometry;
+        textMesh.material = textMaterials;
+        
+        textMesh.position.z = -5.01;
         scene.add(textMesh);
+        console.log(textMesh.position)
+        tick();
+
       } );
-      
+
 
       // 画面サイズの変更に対応
       window.addEventListener( 'resize', onWindowResize, false );
 
-      tick();
       // 毎フレーム時に実行されるループイベントです
       function tick() {
+        renderer.render( scene, camera );
 
-				renderer.render( scene, camera );
+        //textMesh.position.z += 0.02;
+        
+        
         requestAnimationFrame(tick);
       }
 
