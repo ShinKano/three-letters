@@ -49,9 +49,10 @@
       controls.maxPolarAngle = Math.PI / 1.4;
       controls.enableZoom = true;
       controls.autoRotate = false;
+      controls.rotateSpeed = 0.04;
 
       const whiteBoardGeo = new THREE.PlaneGeometry( 40, 20, 32 );
-      const whiteBoardMat = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+      const whiteBoardMat = new THREE.MeshBasicMaterial( {color: 0x777777, side: THREE.DoubleSide} );
       const whiteBoard = new THREE.Mesh( whiteBoardGeo, whiteBoardMat );
       whiteBoard.rotation.set(0, 0, 0);
       scene.add( whiteBoard );
@@ -61,16 +62,16 @@
       //テキスト
       const loader = new THREE.FontLoader();
       const textMeshArray = [];
-      const numOfTextMesh = 3;
-      for (let i = 0; i < numOfTextMesh; i++) {
+      const numOfTextMeshX = 10;
+      const numOfTextMeshY = 10;
+      for (let i = 0; i < numOfTextMeshX; i++) {
         textMeshArray.push(new THREE.Mesh());
       }
-      // const textMesh = new THREE.Mesh();
-      // const textMesh2 = new THREE.Mesh();
+      
       loader.load( 'helvetiker_bold.typeface.json', function ( font ) {
         const textGeoParam = {
           font: font,
-          size: 2,
+          size: 1.1,
           height: 5,
           curveSegments: 12
         };
@@ -78,16 +79,16 @@
         const textGeometry = new THREE.TextGeometry( 'impl', textGeoParam );
         const textMaterials = [
           // 文字の前面
-          new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff } ),
+          new THREE.MeshBasicMaterial( { color: 0xf3f6ff } ),
           // 文字の側面
-          new THREE.MeshBasicMaterial( { color: 0x000000 } )
+          new THREE.MeshBasicMaterial( { color: 0x444444 } )
         ];
 
         textMeshArray.forEach((textMesh, index) => {
           textMesh.geometry = textGeometry;
           textMesh.material = textMaterials;
           textMesh.position.z = -4.90;
-          textMesh.position.x = 6 * index;
+          textMesh.position.x = 3 * index;
           scene.add(textMesh);
         })
 
