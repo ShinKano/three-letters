@@ -4,18 +4,21 @@
   <meta charset="utf-8"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/105/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.101.1/examples/js/controls/OrbitControls.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
   <script type="module">
     // ページの読み込みを待つ
     window.addEventListener('load', init);
     var particles, count = 0;
+
     function init() {
 
       // サイズを指定
       let width = window.innerWidth;
       let height = window.innerHeight;
-
       // マウス座標
-      let mouse = THREE.Vector2(0, 0);
+      let mouse = new THREE.Vector2(0, 0);
+
+      
 
       // レンダラーを作成
       const renderer = new THREE.WebGLRenderer({
@@ -24,6 +27,9 @@
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(width, height);
 
+      
+      
+
       // シーンを作成
       const scene = new THREE.Scene();
       scene.background = new THREE.Color( 0x444444 );
@@ -31,7 +37,7 @@
 
 
       // カメラを作成 (視野角, 画面のアスペクト比, カメラに映る最短距離, カメラに映る最遠距離)
-      const camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000);
+      const camera = new THREE.PerspectiveCamera(45, width / height);
       camera.position.set(12, 0, 30);
 
       const controls = new THREE.OrbitControls(camera);
@@ -69,16 +75,27 @@
         textMesh.geometry = textGeometry;
         textMesh.material = textMaterials;
         
-        textMesh.position.z = -5.01;
+        textMesh.position.z = -4.90;
         scene.add(textMesh);
-        console.log(textMesh.position)
         tick();
 
       } );
 
 
-      // 画面サイズの変更に対応
-      window.addEventListener( 'resize', onWindowResize, false );
+      // レイキャスター
+      const raycaster = new THREE.Raycaster();
+
+      // TweenMax
+      // {paused: true} => 指示するまで動かさない
+      const timeLine = new TimelineMax().delay(0.3);
+      // 変化させる要素, 変化にかける時間(s), 変化させる要素のプロパティ
+      // repeat: -1 => 無限リピート
+
+
+      
+
+
+      
 
       // 毎フレーム時に実行されるループイベントです
       function tick() {
@@ -90,17 +107,42 @@
         requestAnimationFrame(tick);
       }
 
-      function onWindowResize() {
+      // 画面サイズの変更に対応
+      window.addEventListener('resize', onWindowResize, false);
+      window.addEventListener('mousemove', onMouseMove);
+      //window.addEventListener('click', onClick);
 
+      // イベントリスナー向け
+      function onWindowResize() {
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
 
 				renderer.setSize( window.innerWidth, window.innerHeight );
-			}
+      }
+      
+      function onMouseMove(event) {
+        event.preventDefault();
+        // マウス座標を更新
+        mouse.x = (event.clientX / width) * 2 - 1;
+        mouse.y = -(event.clientY / height) * 2 + 1;
+
+        // レイキャスト = マウス位置からまっすぐに伸びる光線ベクトルを生成
+        raycaster.setFromCamera(mouse, camera);
+        // その光線とぶつかったオブジェクトを得る
+        let intersects = raycaster.intersectObjects([textMesh]);
+          intersects.forEach(intersect => {
+            timeLine.clear();
+            timeLine.to(intersect.object.position, 1 , {z: 0})
+              .to(intersect.object.position, 1 , {z: -4.90});
+          })
+        
+        
+      }
+
     }
   </script>
   <style>
-    body { margin: 0;}
+    /* body { margin: 0;} */
   </style>
 </head>
 <body>
