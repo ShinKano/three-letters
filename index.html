@@ -60,11 +60,11 @@
 
       // スポットライト光源を作成
       // new THREE.SpotLight(色, 光の強さ, 距離, 照射角, ボケ具合, 減衰率)
-      const redLight = new THREE.SpotLight(0xaa0000, 1, 30, Math.PI / 1, 10, 0.5);
+      const redLight = new THREE.SpotLight(0xaa0000, 2, 30, Math.PI / 1, 10, 0.5);
       redLight.position.set(20, 0, 0);
       const blueLight = new THREE.SpotLight(0xbbbb00, 1, 30, Math.PI / 1, 10, 0.5);
       blueLight.position.set(-20, 0, 0);
-      const greenLight = new THREE.SpotLight(0x00aa, 1, 30, Math.PI / 1, 10, 0.5);
+      const greenLight = new THREE.SpotLight(0x00aa, 2, 30, Math.PI / 1, 10, 0.5);
 
       scene.add(redLight);
       scene.add(blueLight);
