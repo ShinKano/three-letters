@@ -32,7 +32,7 @@
 
       // シーンを作成
       const scene = new THREE.Scene();
-      scene.background = new THREE.Color( 0x444444 );
+      scene.background = new THREE.Color( 0x666666 );
       // scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
 
 
@@ -52,7 +52,7 @@
       controls.rotateSpeed = 0.04;
 
       const whiteBoardGeo = new THREE.PlaneGeometry( 40, 20, 32 );
-      const whiteBoardMat = new THREE.MeshBasicMaterial( {color: 0x777777, side: THREE.DoubleSide} );
+      const whiteBoardMat = new THREE.MeshBasicMaterial( {color: 0xdddddd, side: THREE.DoubleSide} );
       const whiteBoard = new THREE.Mesh( whiteBoardGeo, whiteBoardMat );
       whiteBoard.rotation.set(0, 0, 0);
       scene.add( whiteBoard );
@@ -87,7 +87,7 @@
           // 文字の前面
           new THREE.MeshBasicMaterial( { color: 0xf3f6ff } ),
           // 文字の側面
-          new THREE.MeshBasicMaterial( { color: 0x444444 } )
+          new THREE.MeshBasicMaterial( { color: 0xbbbbbb } )
         ];
 
         textMeshArray.forEach((textMesh, index) => {
