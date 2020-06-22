@@ -38,7 +38,7 @@
 
       // カメラを作成 (視野角, 画面のアスペクト比, カメラに映る最短距離, カメラに映る最遠距離)
       const camera = new THREE.PerspectiveCamera(45, width / height);
-      camera.position.set(12, 0, 30);
+      camera.position.set(1, -2, 16);
 
       const controls = new THREE.OrbitControls(camera);
       controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
@@ -65,7 +65,13 @@
       const numOfTextMeshX = 10;
       const numOfTextMeshY = 10;
       for (let i = 0; i < numOfTextMeshX; i++) {
-        textMeshArray.push(new THREE.Mesh());
+        for (let j = 0; j < numOfTextMeshY; j++) {
+          const mesh = new THREE.Mesh()
+          mesh.position.z = -4.90;
+          mesh.position.x = 3 * i - 18;
+          mesh.position.y = 2 * j - 10;
+          textMeshArray.push(mesh);
+        }
       }
       
       loader.load( 'helvetiker_bold.typeface.json', function ( font ) {
@@ -87,8 +93,7 @@
         textMeshArray.forEach((textMesh, index) => {
           textMesh.geometry = textGeometry;
           textMesh.material = textMaterials;
-          textMesh.position.z = -4.90;
-          textMesh.position.x = 3 * index;
+          
           scene.add(textMesh);
         })
 
@@ -146,7 +151,7 @@
             // アニメーションしていない場合だけタイムラインを作成する
             if (!TweenMax.isTweening(intersect.object.position)) {
               const timeLine = new TimelineMax();
-              timeLine.to(intersect.object.position, 1 , {z: 0})
+              timeLine.to(intersect.object.position, 1 , {z: -2})
                 .to(intersect.object.position, 1 , {z: -4.90});
             }
           });
